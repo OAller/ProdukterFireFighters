@@ -1,32 +1,32 @@
-﻿using System;
+﻿using ProdukterLib.Classes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+
 
 namespace ProdukterLib
 {
     internal class ProdukterRepo
     {
         // Instance fields
-        private readonly List<Product> _products;
+        private readonly List<User> _users;
 
         // Constructor, that adds mock data
         public ProdukterRepo(bool mockData = false)
         {
-            _products = new List<Product>();
+            _users = new List<User>();
 
             if (mockData)
             {
-                PopulateProducts();
+                PopulateUsers();
             }
         }
 
         // Mock data for initialization
-        private void PopulateProducts()
+        private void PopulateUsers()
         {
-            Add(new Product { Id = 1, Name = "Product 1", Price = 10.99m, Stock = 100, ImageUrl = "www.example1.com" });
-            Add(new Product { Id = 2, Name = "Product 2", Price = 20.99m, Stock = 200, ImageUrl = "www.example2.com" });
-            Add(new Product { Id = 3, Name = "Product 3", Price = 30.99m, Stock = 300, ImageUrl = "www.example3.com" });
-            Add(new Product { Id = 4, Name = "Product 4", Price = 40.99m, Stock = 400, ImageUrl = "www.example4.com" });
+            Add(new User());
+
         }
 
         // GetAll: Returns all products
