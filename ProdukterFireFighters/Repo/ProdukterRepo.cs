@@ -8,10 +8,9 @@ namespace ProdukterLib
 {
     public class ProdukterRepo
     {
-
         private List<User> _users { get; set; } = new List<User>(); // Initialiserer en tom liste
-                                                                    //private int _nextId = 1;
-                                                                    // Constructor, der tilføjer mock data
+
+        // Konstruktør der tilføjer nogle dummy data
         public ProdukterRepo()
         {
             _users.Add(new User { Id = GetNextId(), FirstName = "John", LastName = "Doe", Email = "test@test.dk", Phone = "12345678", Password = "Mellon" });
@@ -32,6 +31,8 @@ namespace ProdukterLib
             return new List<User>(_users); // Returnerer en ny liste for at undgå ekstern modifikation
         }
 
+        // GetNextId: Finder det næste ledige ID
+
         private int GetNextId()
         {
             return _users.Count == 0 ? 1 : _users.Max(resultat => resultat.Id) + 1; //hvis der ikke er nogen participants så er id = 1 ellers er id = max id + 1
@@ -49,7 +50,7 @@ namespace ProdukterLib
             return user;
         }
 
-        // Add: Tilføjer en ny bruger og returnerer den
+        // Add: Tilføjer en ny bruger og returnerer den tilføjede bruger til klienten
         public User Add(User user)
         {
             if (user == null)
@@ -80,7 +81,7 @@ namespace ProdukterLib
             return existingUser;
         }
 
-        // Delete: Fjerner en bruger baseret på ID og returnerer den slettede bruger
+        // Delete: Fjerner en bruger baseret på ID og returnerer den slettede bruger til klienten
         public User Delete(int id)
         {
             User user = GetById(id); // Finder eksisterende bruger

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProdukterLib;            // For at få adgang til ProdukterRepo
-using ProdukterLib.Classes;   // For at få adgang til User-klassen
+using ProdukterLib;
+using ProdukterLib.Classes;
 using System.Collections.Generic;
 using ProdukterRest.DTO;
 using System.Net.NetworkInformation;
@@ -45,6 +45,8 @@ namespace ProdukterRest.Controllers
             }
         }
 
+        // POST api/Produkter
+        // Tilføjer en ny bruger
 
         [HttpPost]
         public ActionResult<User> AddUser([FromBody] UserDTO ObjektDTO)
