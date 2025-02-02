@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 
 
 namespace ProdukterLib
@@ -9,36 +10,34 @@ namespace ProdukterLib
     internal class ProdukterRepo
     {
         // Instance fields
-        private readonly List<User> _users;
-
+        private readonly List<User> _users = new List<User>();
+        private int _nextId = 1;
         // Constructor, that adds mock data
-        public ProdukterRepo(bool mockData = false)
+        public ProdukterRepo()
         {
-            _users = new List<User>();
-
-            if (mockData)
-            {
-                PopulateUsers();
-            }
+            Add(new User { Id = GetNextId, FirstName = "John", LastName = "Doe", Email = " }    
+        
+        private ProdukterRepo()
+        {
+            Add(new User { Id = 1, FirstName = "John", LastName = "Doe", Email = "test@test.dk", Phone = "12345678", Password = "Mellon", Image = "Url", IsAdmin = false, IsEmployee = false });       
         }
 
-        // Mock data for initialization
-        private void PopulateUsers()
+        // GetNextId: Returns the next available ID
+        private int GetNextId()
         {
-            Add(new User());
-
+            return _users.Count == 0 ? 1 : _users.Max(resultat => resultat.Id) + 1;
         }
 
         // GetAll: Returns all products
         public List<Product> GetAll()
         {
-            return new List<Product>(_products); // Returns a new list
+            return new List<Product>(_users); // Returns a new list
         }
 
         // GetById: Returns a product based on ID
         public Product GetById(int id)
         {
-            Product? product = _products.Find(p => p.Id == id);
+            Product? product = _users.Find(p => p.Id == id);
 
             if (product == null)
             {
@@ -48,42 +47,34 @@ namespace ProdukterLib
         }
 
         // Add: Adds a new product and returns it
-        public Product Add(Product product)
+        public UserStringHandle Add(User product)
         {
-            _products.Add(product);
-            return product;
+            _products.Add(_users);
+            return _users;
         }
 
         // Update: Updates an existing product and returns the updated version
-        public Product Update(int id, Product updatedProduct)
+        public User Update(int id, User updatedUser)
         {
-            Product existingProduct = GetById(id); // Throws KeyNotFoundException if ID is not found
+            User existingUser = GetById(id); // Throws KeyNotFoundException if ID is not found
 
             // Update values
-            existingProduct.Name = updatedProduct.Name;
-            existingProduct.Price = updatedProduct.Price;
-            existingProduct.Stock = updatedProduct.Stock;
-            existingProduct.ImageUrl = updatedProduct.ImageUrl;
+            existingUser.Name = updatedUser.Name;
+            existingUser.Price = updatedUser.Price;
+            existingUser.Stock = updatedUser.Stock;
+            existingUser.ImageUrl = updatedUser.ImageUrl;
 
-            return existingProduct;
+            return existingUser;
         }
 
         // Delete: Removes a product based on ID and returns the removed product
-        public Product Delete(int id)
+        public User Delete(int id)
         {
-            Product product = GetById(id); // Throws KeyNotFoundException if ID is not found
-            _products.Remove(product);
-            return product;
+            User user = GetById(id); // Throws KeyNotFoundException if ID is not found
+            _users.Remove(user);
+            return user;
         }
     }
 
-    // Assuming Product class is defined somewhere in your project
-    public class Product
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-        public int Stock { get; set; }
-        public string ImageUrl { get; set; }
-    }
+
 }
