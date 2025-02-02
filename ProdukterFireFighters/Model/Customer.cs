@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProdukterFireFighters
+namespace ProdukterLib.Classes
 {
     internal class Customer
     {

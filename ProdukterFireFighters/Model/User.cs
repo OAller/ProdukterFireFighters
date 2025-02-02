@@ -1,4 +1,4 @@
-﻿namespace ProdukterFireFighters
+﻿namespace ProdukterLib.Classes
 {
     public class User
     {
