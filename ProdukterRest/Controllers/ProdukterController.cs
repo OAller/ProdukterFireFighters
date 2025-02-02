@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using ProdukterLib;            // For at få adgang til ProdukterRepo
+using ProdukterLib.Classes;   // For at få adgang til User-klassen
+using System.Collections.Generic;
 
 namespace ProdukterRest.Controllers
 {
@@ -8,36 +9,88 @@ namespace ProdukterRest.Controllers
     [ApiController]
     public class ProdukterController : ControllerBase
     {
-        // GET: api/<ProdukterController>
+        // Typisk enten DI (Dependency Injection) eller en simpel instans til demo
+        private readonly ProdukterRepo _repo;
+
+        public ProdukterController()
+        {
+            // Simpel demo: ny instans hver gang controlleren oprettes
+            // I et rigtigt projekt vil man ofte bruge dependency injection i Startup/Program
+            _repo = new ProdukterRepo();
+        }
+
+        // GET: api/Produkter
+        // Henter alle brugere
         [HttpGet]
-        public IEnumerable<string> Get()
+        public ActionResult<List<User>> GetAll()
         {
-            return new string[] { "value1", "value2" };
+            // Returnerer en liste af Users
+            return Ok(_repo.GetAll());
         }
 
-        // GET api/<ProdukterController>/5
+        // GET api/Produkter/5
+        // Henter én bruger ud fra ID
         [HttpGet("{id}")]
-        public string Get(int id)
+        public ActionResult<User> GetById(int id)
         {
-            return "value";
+            try
+            {
+                User user = _repo.GetById(id);
+                return Ok(user);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
-        // POST api/<ProdukterController>
+        // POST api/Produkter
+        // Opretter en ny bruger
         [HttpPost]
-        public void Post([FromBody] string value)
+        public ActionResult<User> Post([FromBody] User newUser)
         {
+            if (newUser == null)
+                return BadRequest("User object cannot be null");
+
+            User createdUser = _repo.Add(newUser);
+
+            // Created(...) returnerer en 201 (Created) status med et 'Location'-header
+            return Created($"api/Produkter/{createdUser.Id}", createdUser);
         }
 
-        // PUT api/<ProdukterController>/5
+        // PUT api/Produkter/5
+        // Opdaterer en eksisterende bruger
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public ActionResult<User> Put(int id, [FromBody] User updatedUser)
         {
+            if (updatedUser == null)
+                return BadRequest("User object cannot be null");
+
+            try
+            {
+                User user = _repo.Update(id, updatedUser);
+                return Ok(user);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
 
-        // DELETE api/<ProdukterController>/5
+        // DELETE api/Produkter/5
+        // Sletter en bruger baseret på ID
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public ActionResult<User> Delete(int id)
         {
+            try
+            {
+                User user = _repo.Delete(id);
+                return Ok(user);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

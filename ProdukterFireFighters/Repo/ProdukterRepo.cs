@@ -2,79 +2,85 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata;
-
 
 namespace ProdukterLib
 {
-    internal class ProdukterRepo
+    public class ProdukterRepo
     {
         // Instance fields
         private readonly List<User> _users = new List<User>();
         private int _nextId = 1;
-        // Constructor, that adds mock data
+
+        // Constructor, der tilføjer mock data
         public ProdukterRepo()
         {
-            Add(new User { Id = GetNextId, FirstName = "John", LastName = "Doe", Email = " }    
-        
-        private ProdukterRepo()
-        {
-            Add(new User { Id = 1, FirstName = "John", LastName = "Doe", Email = "test@test.dk", Phone = "12345678", Password = "Mellon", Image = "Url", IsAdmin = false, IsEmployee = false });       
+            Add(new User { FirstName = "John", LastName = "Doe", Email = "test@test.dk", Phone = "12345678", Password = "Mellon" });
+            Add(new User { FirstName = "Jane", LastName = "Smith", Email = "jane.smith@test.dk", Phone = "23456789", Password = "JanesPass" });
+            Add(new User { FirstName = "Bob", LastName = "Johnson", Email = "bob.johnson@test.dk", Phone = "34567890", Password = "BobsPass" });
+            Add(new User { FirstName = "Alice", LastName = "Brown", Email = "alice.brown@test.dk", Phone = "45678901", Password = "AlicesPass" });
+            Add(new User { FirstName = "Michael", LastName = "Hansen", Email = "michael.hansen@test.dk", Phone = "56789012", Password = "MichaelsPass" });
+            Add(new User { FirstName = "Camilla", LastName = "Mortensen", Email = "camilla.mortensen@test.dk", Phone = "67890123", Password = "CamillasPass" });
+            Add(new User { FirstName = "David", LastName = "Eriksen", Email = "david.eriksen@test.dk", Phone = "78901234", Password = "DavidsPass" });
+            Add(new User { FirstName = "Emma", LastName = "Andersen", Email = "emma.andersen@test.dk", Phone = "89012345", Password = "EmmasPass" });
+            Add(new User { FirstName = "Frederik", LastName = "Nielsen", Email = "frederik.nielsen@test.dk", Phone = "90123456", Password = "FrederiksPass" });
+            Add(new User { FirstName = "Sofie", LastName = "Petersen", Email = "sofie.petersen@test.dk", Phone = "01234567", Password = "SofiesPass" });
         }
 
-        // GetNextId: Returns the next available ID
-        private int GetNextId()
+        // GetAll: Returnerer alle brugere
+        public List<User> GetAll()
         {
-            return _users.Count == 0 ? 1 : _users.Max(resultat => resultat.Id) + 1;
+            return new List<User>(_users); // Returnerer en ny liste for at undgå ekstern modifikation
         }
 
-        // GetAll: Returns all products
-        public List<Product> GetAll()
+        // GetById: Finder en bruger baseret på ID
+        public User GetById(int id)
         {
-            return new List<Product>(_users); // Returns a new list
-        }
+            User? user = _users.Find(u => u.Id == id);
 
-        // GetById: Returns a product based on ID
-        public Product GetById(int id)
-        {
-            Product? product = _users.Find(p => p.Id == id);
-
-            if (product == null)
+            if (user == null)
             {
-                throw new KeyNotFoundException($"Product with ID {id} was not found.");
+                throw new KeyNotFoundException($"User with ID {id} was not found.");
             }
-            return product;
+            return user;
         }
 
-        // Add: Adds a new product and returns it
-        public UserStringHandle Add(User product)
+        // Add: Tilføjer en ny bruger og returnerer den
+        public User Add(User user)
         {
-            _products.Add(_users);
-            return _users;
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+            user.Id = _nextId++;
+            _users.Add( user );
+            return user;
+           
         }
 
-        // Update: Updates an existing product and returns the updated version
+        // Update: Opdaterer en eksisterende bruger og returnerer den opdaterede version
         public User Update(int id, User updatedUser)
         {
-            User existingUser = GetById(id); // Throws KeyNotFoundException if ID is not found
+            User existingUser = GetById(id); // Finder eksisterende bruger
 
-            // Update values
-            existingUser.Name = updatedUser.Name;
-            existingUser.Price = updatedUser.Price;
-            existingUser.Stock = updatedUser.Stock;
-            existingUser.ImageUrl = updatedUser.ImageUrl;
+            // Opdaterer værdier
+            existingUser.FirstName = updatedUser.FirstName;
+            existingUser.LastName = updatedUser.LastName;
+            existingUser.Email = updatedUser.Email;
+            existingUser.Phone = updatedUser.Phone;
+            existingUser.Password = updatedUser.Password;
+            existingUser.Image = updatedUser.Image;
+            existingUser.IsAdmin = updatedUser.IsAdmin;
+            existingUser.IsEmployee = updatedUser.IsEmployee;
 
             return existingUser;
         }
 
-        // Delete: Removes a product based on ID and returns the removed product
+        // Delete: Fjerner en bruger baseret på ID og returnerer den slettede bruger
         public User Delete(int id)
         {
-            User user = GetById(id); // Throws KeyNotFoundException if ID is not found
+            User user = GetById(id); // Finder eksisterende bruger
             _users.Remove(user);
             return user;
         }
     }
-
-
 }
