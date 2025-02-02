@@ -2,6 +2,10 @@
 using ProdukterLib;            // For at få adgang til ProdukterRepo
 using ProdukterLib.Classes;   // For at få adgang til User-klassen
 using System.Collections.Generic;
+using ProdukterRest.DTO;
+using System.Net.NetworkInformation;
+using System;
+using System.Numerics;
 
 namespace ProdukterRest.Controllers
 {
@@ -44,18 +48,20 @@ namespace ProdukterRest.Controllers
             }
         }
 
-        // POST api/Produkter
-        // Opretter en ny bruger
+
         [HttpPost]
-        public ActionResult<User> Post([FromBody] User newUser)
+        public ActionResult<User> AddUser([FromBody] UserDTO ObjektDTO)
         {
-            if (newUser == null)
-                return BadRequest("User object cannot be null");
-
-            User createdUser = _repo.Add(newUser);
-
-            // Created(...) returnerer en 201 (Created) status med et 'Location'-header
-            return Created($"api/Produkter/{createdUser.Id}", createdUser);
+            try
+            {
+                User objekt = new User { FirstName = ObjektDTO.FirstName, LastName = ObjektDTO.LastName, Email = ObjektDTO.Email, Phone = ObjektDTO.Phone, Password = ObjektDTO.Password }; //konverterer ParticipantsDTO til Participant
+                User result = _repo.Add(objekt);
+                return CreatedAtAction(nameof(GetById), new { id = result.Id }, result); //201 http statuskode
+            }
+            catch (ArgumentException EX)
+            {
+                return BadRequest(EX.Message); //400 http statuskode
+            }
         }
 
         // PUT api/Produkter/5

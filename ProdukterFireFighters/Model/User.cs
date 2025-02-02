@@ -130,5 +130,9 @@
             _isAdmin = isAdmin;
             _isEmployee = isEmployee;
         }
+        public override string ToString()
+        {
+            return $"{_id} {_firstName} {_lastName} {_email} {_phone} {_password} {_image} {_isAdmin} {_isEmployee}";
+        }
     }
 }
