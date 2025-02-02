@@ -11,26 +11,23 @@ namespace ProdukterRest.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProdukterController : ControllerBase
+    public class UsersController : ControllerBase
     {
-        // Typisk enten DI (Dependency Injection) eller en simpel instans til demo
-        private readonly ProdukterRepo _repo;
+        private readonly ProdukterRepo _users;
 
-        public ProdukterController()
+        // Dependency Injection
+        public UsersController(ProdukterRepo repo)
         {
-            // Simpel demo: ny instans hver gang controlleren oprettes
-            // I et rigtigt projekt vil man ofte bruge dependency injection i Startup/Program
-            _repo = new ProdukterRepo();
+            _users = repo;
         }
-
-        // GET: api/Produkter
-        // Henter alle brugere
+        
+        // GET: api/Users
         [HttpGet]
         public ActionResult<List<User>> GetAll()
         {
-            // Returnerer en liste af Users
-            return Ok(_repo.GetAll());
+            return Ok(_users.GetAll());
         }
+    
 
         // GET api/Produkter/5
         // Henter én bruger ud fra ID
@@ -39,7 +36,7 @@ namespace ProdukterRest.Controllers
         {
             try
             {
-                User user = _repo.GetById(id);
+                User user = _users.GetById(id);
                 return Ok(user);
             }
             catch (KeyNotFoundException ex)
@@ -55,7 +52,7 @@ namespace ProdukterRest.Controllers
             try
             {
                 User objekt = new User { FirstName = ObjektDTO.FirstName, LastName = ObjektDTO.LastName, Email = ObjektDTO.Email, Phone = ObjektDTO.Phone, Password = ObjektDTO.Password }; //konverterer ParticipantsDTO til Participant
-                User result = _repo.Add(objekt);
+                User result = _users.Add(objekt);
                 return CreatedAtAction(nameof(GetById), new { id = result.Id }, result); //201 http statuskode
             }
             catch (ArgumentException EX)
@@ -74,7 +71,7 @@ namespace ProdukterRest.Controllers
 
             try
             {
-                User user = _repo.Update(id, updatedUser);
+                User user = _users.Update(id, updatedUser);
                 return Ok(user);
             }
             catch (KeyNotFoundException ex)
@@ -90,7 +87,7 @@ namespace ProdukterRest.Controllers
         {
             try
             {
-                User user = _repo.Delete(id);
+                User user = _users.Delete(id);
                 return Ok(user);
             }
             catch (KeyNotFoundException ex)
