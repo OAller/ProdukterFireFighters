@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FashionHub - Signup</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="stylesignup.css">
+</head>
+<body>
+    <header class="bg-dark text-white py-3">
+        <div class="container d-flex justify-content-between">
+            <h1 class="h3">FashionHub</h1>
+            <nav>
+                <ul class="nav">
+                    <li class="nav-item"><a href="index.html" class="nav-link text-white">Forside</a></li>
+                    <li class="nav-item"><a href="login.html" class="nav-link text-white">Login</a></li>
+                    <li class="nav-item"><a href="signup.html" class="nav-link text-white">Signup</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <main class="container mt-4">
+        <h2 class="text-center">Opret Konto</h2>
+        <div class="form-container shadow p-4 rounded bg-light">
+            <form>
+                <div class="mb-3 d-flex gap-3">
+                    <div class="flex-grow-1">
+                        <label for="firstname" class="form-label">Fornavn</label>
+                        <input type="text" id="firstname" class="form-control" placeholder="Indtast dit fornavn">
+                    </div>
+                    <div class="flex-grow-1">
+                        <label for="lastname" class="form-label">Efternavn</label>
+                        <input type="text" id="lastname" class="form-control" placeholder="Indtast dit efternavn">
+                    </div>
+                </div>
+                <div class="mb-3 d-flex gap-3">
+                    <div class="flex-grow-1">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" id="email" class="form-control" placeholder="Indtast din email">
+                    </div>
+                    <div class="flex-grow-1">
+                        <label for="phone" class="form-label">Telefonnummer</label>
+                        <input type="tel" id="phone" class="form-control" placeholder="Indtast dit telefonnummer">
+                    </div>
+                </div>
+                <div class="mb-3 d-flex gap-3">
+                    <div class="flex-grow-1">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" id="password" class="form-control" placeholder="Indtast dit password">
+                    </div>
+                    <div class="flex-grow-1">
+                        <label for="confirm-password" class="form-label">Gentag Password</label>
+                        <input type="password" id="confirm-password" class="form-control" placeholder="Gentag dit password">
+                    </div>
+                </div>
+                <div class="text-center">
+                    <a href="index.html" class="btn btn-success">Opret Konto</a>
+                </div>
+            </form>
+        </div>
+    </main>
+    <footer class="bg-dark text-white text-center py-3 mt-5">
+        &copy; 2025 FashionHub. All Rights Reserved.
+    </footer>
+</body>
+</html>
