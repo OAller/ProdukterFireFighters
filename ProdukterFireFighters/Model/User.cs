@@ -1,138 +1,41 @@
-﻿namespace ProdukterLib.Classes
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using BCrypt.Net;
+
+public class User
 {
-    public class User
+    [Key]
+    public int Id { get; set; }  // Primær nøgle
+
+    public string Email { get; set; }  // Unik email
+    public string PasswordHash { get; set; }  // Hashet adgangskode
+
+    // Konstruktør der sikrer, at email og password ikke er tomme
+    public User(string email, string password)
     {
-        // Instansfelter
-        private int _id;
-        private string _firstName;
-        private string _lastName;
-        private string _email;
-        private string _phone;
-        private string _password;
-        private string _image;
-        private bool _isAdmin;
-        private bool _isEmployee;
-
-        // Properties
-        public int Id
+        if (string.IsNullOrWhiteSpace(email))
         {
-            get => _id;
-            set => _id = value;
-        }
-        //Validering
-        public string FirstName
-        {
-            get => _firstName;
-            set
-            {
-                if (value.Length < 2)
-                {
-                    throw new ArgumentException("Firstname must be at least 2 characters long");
-                }
-                _firstName = value;
-            }
+            throw new ArgumentException("Email må ikke være tom.");
         }
 
-        public string LastName
+        if (string.IsNullOrWhiteSpace(password))
         {
-            get => _lastName;
-            set
-            {
-                if (value.Length < 2)
-                {
-                    throw new ArgumentException("Lastname must be at least 2 characters long");
-                }
-                _lastName = value;
-            }
+            throw new ArgumentException("Password må ikke være tomt.");
         }
 
-        public string Email
-        {
-            get => _email;
-            set
-            {
-                if (!value.Contains("@"))
-                {
-                    throw new ArgumentException("Email must contain @");
-                }
-                _email = value;
-            }
-        }
+        Email = email;
+        PasswordHash = HashPassword(password);
+    }
 
-        public string Phone
-        {
-            get => _phone;
-            set
-            {
-                if (value.Length < 8)
-                {
-                    throw new ArgumentException("Phone number must be at least 8 characters long");
-                }
-                _phone = value;
-            }
-        }
+    // Metode til at hashe adgangskode
+    public static string HashPassword(string password)
+    {
+        return BCrypt.Net.BCrypt.HashPassword(password);
+    }
 
-        public string Password
-        {
-            get => _password;
-            set
-            {
-                if (value.Length < 6)
-                {
-                    throw new ArgumentException("Password must be at least 6 characters long");
-                }
-                _password = value;
-            }
-        }
-
-        public string Image
-        {
-            get => _image;
-            set => _image = value;
-        }
-
-        public bool IsAdmin
-        {
-            get => _isAdmin;
-            set => _isAdmin = value;
-        }
-
-        public bool IsEmployee
-        {
-            get => _isEmployee;
-            set => _isEmployee = value;
-        }
-
-        // Standardkonstruktør
-        public User()
-        {
-            _id = 0;
-            _firstName = string.Empty;
-            _lastName = string.Empty;
-            _email = string.Empty;
-            _phone = string.Empty;
-            _password = string.Empty;
-            _image = string.Empty;
-            _isAdmin = false;
-            _isEmployee = false;
-        }
-
-        // Overloadet konstruktør m. alle parametre
-        public User(int id, string firstName, string lastName, string email, string phone, string password, string image, bool isAdmin, bool isEmployee)
-        {
-            _id = id;
-            _firstName = firstName;
-            _lastName = lastName;
-            _email = email;
-            _phone = phone;
-            _password = password;
-            _image = image;
-            _isAdmin = isAdmin;
-            _isEmployee = isEmployee;
-        }
-        public override string ToString()
-        {
-            return $"{_id} {_firstName} {_lastName} {_email} {_phone} {_password} {_image} {_isAdmin} {_isEmployee}";
-        }
+    // Metode til at validere adgangskode
+    public bool VerifyPassword(string password)
+    {
+        return BCrypt.Net.BCrypt.Verify(password, this.PasswordHash);
     }
 }
