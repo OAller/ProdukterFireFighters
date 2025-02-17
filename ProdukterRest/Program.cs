@@ -1,11 +1,17 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Hent connection string fra appsettings.json
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+// Tilføj services til containeren
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Registrer ProdukterRepo med connection string som parameter
 builder.Services.AddSingleton(new ProdukterRepo());
+
+// Konfigurer CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>
@@ -18,7 +24,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Konfigurer middleware-pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
