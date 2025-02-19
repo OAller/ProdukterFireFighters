@@ -62,23 +62,102 @@ public class ProdukterRepo
     // Metode til at validere brugerlogin
     public bool ValidateUser(string email, string password)
     {
-        using (SqlConnection conn = new SqlConnection(connectionString))
+        try
         {
-            conn.Open();
-            string query = "SELECT PasswordHash FROM Users WHERE Email = @Email";
+            Debug.WriteLine("Starter login-validering for: " + email);
 
-            using (SqlCommand cmd = new SqlCommand(query, conn))
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                cmd.Parameters.AddWithValue("@Email", email);
-                object result = cmd.ExecuteScalar();
+                conn.Open();
+                Debug.WriteLine("Forbindelse til databasen oprettet.");
 
-                if (result != null)
+                string query = "SELECT Password FROM Users WHERE Email = @Email";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
-                    string storedHash = result.ToString();
-                    return BCrypt.Net.BCrypt.Verify(password, storedHash);
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    object result = cmd.ExecuteScalar();
+
+                    if (result != null)
+                    {
+                        string storedHash = result.ToString();
+                        Debug.WriteLine("Hentet password-hash fra databasen: " + storedHash);
+
+                        bool isValid = BCrypt.Net.BCrypt.Verify(password, storedHash);
+                        Debug.WriteLine("BCrypt.Verify resultat: " + isValid);
+
+                        return isValid;
+                    }
+                    else
+                    {
+                        Debug.WriteLine("Ingen bruger fundet med email: " + email);
+                        return false;
+                    }
                 }
             }
         }
-        return false;
+        catch (SqlException sqlEx)
+        {
+            Debug.WriteLine("SQL-fejl i ValidateUser: " + sqlEx.Message);
+            Debug.WriteLine(sqlEx.StackTrace);
+            return false;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("Generel fejl i ValidateUser: " + ex.Message);
+            Debug.WriteLine(ex.StackTrace);
+            return false;
+        }
     }
+
+    public bool ChangeUserPassword(string email, string oldPassword, string newPassword)
+    {
+        try
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "SELECT Password FROM Users WHERE Email = @Email";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Email", email);
+                    object result = cmd.ExecuteScalar();
+
+                    if (result != null)
+                    {
+                        string storedHash = result.ToString();
+
+                        if (BCrypt.Net.BCrypt.Verify(oldPassword, storedHash))
+                        {
+                            string newHashedPassword = BCrypt.Net.BCrypt.HashPassword(newPassword);
+
+                            string updateQuery = "UPDATE Users SET Password = @NewPassword WHERE Email = @Email";
+                            using (SqlCommand updateCmd = new SqlCommand(updateQuery, conn))
+                            {
+                                updateCmd.Parameters.AddWithValue("@Email", email);
+                                updateCmd.Parameters.AddWithValue("@NewPassword", newHashedPassword);
+                                updateCmd.ExecuteNonQuery();
+
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+        catch (SqlException sqlEx)
+        {
+            Debug.WriteLine("SQL-fejl i ChangeUserPassword: " + sqlEx.Message);
+            return false;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine("Generel fejl i ChangeUserPassword: " + ex.Message);
+            return false;
+        }
+    }
+
+
 }

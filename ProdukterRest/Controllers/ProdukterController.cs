@@ -34,15 +34,53 @@ public class ProdukterController : ControllerBase
             return BadRequest("Email og password er påkrævet.");
         }
 
-        bool isValidUser = _repo.ValidateUser(userDto.Email, userDto.Password);
+        try
+        {
+            bool isValidUser = _repo.ValidateUser(userDto.Email, userDto.Password);
 
-        if (isValidUser)
-        {
-            return Ok("Login succesfuldt.");
+            if (isValidUser)
+            {
+                return Ok("Login succesfuldt.");
+            }
+            else
+            {
+                return Unauthorized("Forkert email eller adgangskode.");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            return Unauthorized("Forkert email eller adgangskode.");
+            return StatusCode(500, "Der opstod en fejl: " + ex.Message);
         }
     }
+
+    [HttpPost("change-password")]
+    public IActionResult ChangePassword([FromBody] ChangePasswordDTO changePasswordDto)
+    {
+        if (string.IsNullOrEmpty(changePasswordDto.Email) ||
+            string.IsNullOrEmpty(changePasswordDto.OldPassword) ||
+            string.IsNullOrEmpty(changePasswordDto.NewPassword))
+        {
+            return BadRequest("Alle felter skal udfyldes.");
+        }
+
+        try
+        {
+            bool isUpdated = _repo.ChangeUserPassword(changePasswordDto.Email, changePasswordDto.OldPassword, changePasswordDto.NewPassword);
+
+            if (isUpdated)
+            {
+                return Ok("Adgangskode opdateret.");
+            }
+            else
+            {
+                return Unauthorized("Forkert email eller adgangskode.");
+            }
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "Der opstod en fejl: " + ex.Message);
+        }
+    }
+
+
 }
