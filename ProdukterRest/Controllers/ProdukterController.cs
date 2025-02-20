@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc;
 using ProdukterRest.DTO;
 
 [Route("api/[controller]")]
@@ -7,24 +8,58 @@ public class ProdukterController : ControllerBase
 {
     private readonly ProdukterRepo _repo = new ProdukterRepo();
 
+    private bool IsValidEmail(string email)
+    {
+        // Traditionel email validering med regex
+        string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+        return Regex.IsMatch(email, emailPattern);
+    }
+
+    private void ValidatePassword(string password)
+    {
+        if (password.Length < 11)
+        {
+            throw new ArgumentException("Password skal være mindst 12 tegn langt.");
+        }
+        if (!Regex.IsMatch(password, @"[A-Z]"))
+        {
+            throw new ArgumentException("Password skal indeholde mindst ét stort bogstav.");
+        }
+        if (!Regex.IsMatch(password, @"[a-z]"))
+        {
+            throw new ArgumentException("Password skal indeholde mindst ét lille bogstav.");
+        }
+        if (password.Contains(" "))
+        {
+            throw new ArgumentException("Password må ikke indeholde mellemrum.");
+        }
+    }
+
     [HttpPost("register")]
     public IActionResult Register([FromBody] UserDTO userDto)
     {
         if (string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
         {
-            // 400 Bad Request
             return BadRequest("Email og password er påkrævet.");
+        }
+
+        if (!IsValidEmail(userDto.Email))
+        {
+            return BadRequest("Email skal indeholde '@'.");
         }
 
         try
         {
+            ValidatePassword(userDto.Password);
             _repo.CreateUser(userDto.Email, userDto.Password);
-            // 201 Created – selvom vi ikke returnerer en resource URL her
             return StatusCode(201, "Bruger oprettet succesfuldt.");
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {
-            // 500 Internal Server Error
             return StatusCode(500, "Fejl ved oprettelse af bruger: " + ex.Message);
         }
     }
@@ -34,28 +69,34 @@ public class ProdukterController : ControllerBase
     {
         if (string.IsNullOrEmpty(userDto.Email) || string.IsNullOrEmpty(userDto.Password))
         {
-            // 400 Bad Request
             return BadRequest("Email og password er påkrævet.");
+        }
+
+        if (!IsValidEmail(userDto.Email))
+        {
+            return BadRequest("Email skal indeholde '@'.");
         }
 
         try
         {
+            ValidatePassword(userDto.Password);
             bool isValidUser = _repo.ValidateUser(userDto.Email, userDto.Password);
 
             if (isValidUser)
             {
-                // 200 OK
                 return Ok("Login succesfuldt.");
             }
             else
             {
-                // 401 Unauthorized
                 return Unauthorized("Forkert email eller adgangskode.");
             }
         }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
         catch (Exception ex)
         {
-            // 500 Internal Server Error
             return StatusCode(500, "Der opstod en fejl: " + ex.Message);
         }
     }
@@ -67,28 +108,34 @@ public class ProdukterController : ControllerBase
             string.IsNullOrEmpty(changePasswordDto.OldPassword) ||
             string.IsNullOrEmpty(changePasswordDto.NewPassword))
         {
-            // 400 Bad Request
             return BadRequest("Alle felter skal udfyldes.");
+        }
+
+        if (!IsValidEmail(changePasswordDto.Email))
+        {
+            return BadRequest("Email skal indeholde '@'.");
         }
 
         try
         {
+            ValidatePassword(changePasswordDto.NewPassword);
             bool isUpdated = _repo.ChangeUserPassword(changePasswordDto.Email, changePasswordDto.OldPassword, changePasswordDto.NewPassword);
 
             if (isUpdated)
             {
-                // 200 OK
                 return Ok("Adgangskode opdateret.");
             }
             else
             {
-                // 401 Unauthorized – hvis for eksempel det gamle kodeord er forkert
                 return Unauthorized("Forkert email eller adgangskode.");
             }
         }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
         catch (Exception ex)
         {
-            // 500 Internal Server Error
             return StatusCode(500, "Der opstod en fejl: " + ex.Message);
         }
     }

@@ -13,14 +13,14 @@ public class User
     // Konstruktør der sikrer, at email og password ikke er tomme
     public User(string email, string password)
     {
-        if (string.IsNullOrWhiteSpace(email))
+      //  if (string.IsNullOrWhiteSpace(email))
         {
-            throw new ArgumentException("Email må ikke være tom.");
+           // throw new ArgumentException("Email må ikke være tom.");
         }
 
-        if (string.IsNullOrWhiteSpace(password))
+       // if (string.IsNullOrWhiteSpace(password))
         {
-            throw new ArgumentException("Password må ikke være tomt.");
+           // throw new ArgumentException("Password må ikke være tomt.");
         }
 
         Email = email;
