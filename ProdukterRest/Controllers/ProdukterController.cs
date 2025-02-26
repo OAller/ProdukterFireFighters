@@ -139,4 +139,24 @@ public class ProdukterController : ControllerBase
             return StatusCode(500, "Der opstod en fejl: " + ex.Message);
         }
     }
+    [HttpGet("products")]
+    public IActionResult GetAllProducts()
+    {
+        try
+        {
+            var products = _repo.GetAllProducts();
+
+            if (products == null || products.Count == 0)
+            {
+                return NotFound("Ingen produkter fundet.");
+            }
+
+            return Ok(products);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "Fejl ved hentning af produkter: " + ex.Message);
+        }
+    }
+
 }

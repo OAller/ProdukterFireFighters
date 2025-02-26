@@ -4,6 +4,11 @@ using System;
 using System.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using ProdukterRest.DTO; 
+
+
+
+
 
 public class ProdukterRepo
 {
@@ -156,6 +161,43 @@ public class ProdukterRepo
         {
             Debug.WriteLine("Generel fejl i ChangeUserPassword: " + ex.Message);
             return false;
+        }
+    }
+    public List<Product> GetAllProducts()
+    {
+        try
+        {
+            List<Product> products = new List<Product>();
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "SELECT ProductId, Name, Description, Price, ImageUrl FROM Products";
+
+                using (SqlCommand cmd = new SqlCommand(query, conn))
+                {
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        var product = new Product
+                        {
+                            ProductId = (int)reader["ProductId"],
+                            Name = reader["Name"].ToString(),
+                            Description = reader["Description"].ToString(),
+                            Price = (decimal)reader["Price"],
+                            ImageUrl = reader["ImageUrl"].ToString() // Hent billedstien
+                        };
+                        products.Add(product);
+                    }
+                }
+            }
+
+            return products;
+        }
+        catch (Exception ex)
+        {
+            // Håndter fejl
+            return null;
         }
     }
 
