@@ -20,42 +20,28 @@
             </nav>
         </div>
     </header>
-    <main class="container mt-4">
+    <main class="container mt-4" id="signup-app">
         <h2 class="text-center">Opret Konto</h2>
         <div class="form-container shadow p-4 rounded bg-light">
-            <form>
-                <div class="mb-3 d-flex gap-3">
-                    <div class="flex-grow-1">
-                        <label for="firstname" class="form-label">Fornavn</label>
-                        <input type="text" id="firstname" class="form-control" placeholder="Indtast dit fornavn">
-                    </div>
-                    <div class="flex-grow-1">
-                        <label for="lastname" class="form-label">Efternavn</label>
-                        <input type="text" id="lastname" class="form-control" placeholder="Indtast dit efternavn">
-                    </div>
-                </div>
+            <form @submit.prevent="signupFunction">
                 <div class="mb-3 d-flex gap-3">
                     <div class="flex-grow-1">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" class="form-control" placeholder="Indtast din email">
-                    </div>
-                    <div class="flex-grow-1">
-                        <label for="phone" class="form-label">Telefonnummer</label>
-                        <input type="tel" id="phone" class="form-control" placeholder="Indtast dit telefonnummer">
+                        <input type="email" id="email" v-model="email" class="form-control" placeholder="Indtast din email" required>
                     </div>
                 </div>
                 <div class="mb-3 d-flex gap-3">
                     <div class="flex-grow-1">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" id="password" class="form-control" placeholder="Indtast dit password">
+                        <input type="password" id="password" v-model="password" class="form-control" placeholder="Indtast dit password" required>
                     </div>
                     <div class="flex-grow-1">
                         <label for="confirm-password" class="form-label">Gentag Password</label>
-                        <input type="password" id="confirm-password" class="form-control" placeholder="Gentag dit password">
+                        <input type="password" id="confirm-password" v-model="confirmPassword" class="form-control" placeholder="Gentag dit password" required>
                     </div>
                 </div>
                 <div class="text-center">
-                    <a href="index.html" class="btn btn-success">Opret Konto</a>
+                    <button type="submit" class="btn btn-success">Opret Konto</button>
                 </div>
             </form>
         </div>
@@ -63,5 +49,8 @@
     <footer class="bg-dark text-white text-center py-3 mt-5">
         &copy; 2025 FashionHub. All Rights Reserved.
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/MAIN/mainsignup.js"></script>
 </body>
 </html>

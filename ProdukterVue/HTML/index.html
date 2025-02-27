@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="da">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,12 +20,44 @@
             </nav>
         </div>
     </header>
+
     <main class="container mt-4">
-        <h2>Velkommen til FashionHub!</h2>
-        <p>Din one-stop shop for trendy tøj.</p>
+        <div id="app">
+            <h2>Velkommen til FashionHub!</h2>
+            <p>Din one-stop shop for trendy tøj.</p>
+
+            <h3 class="mt-4">🛍️ Vores produkter</h3>
+            <div class="row">
+                <div class="col-md-4 mb-4" v-for="product in products" :key="product.productId">
+                    <div class="card">
+                        <img :src="product.imageUrl" class="card-img-top" alt="Product Image">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text">{{ product.description }}</p>
+                            <p class="fw-bold">{{ product.price }} DKK</p>
+                            <button class="btn btn-success" @click="addToCart(product.productId)">🛒 Tilføj til kurv</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="mt-5">🛒 Din Indkøbskurv</h3>
+            <div v-if="cart.length > 0" class="list-group">
+                <div v-for="(item, index) in cart" :key="index" class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>{{ item.name }} - {{ item.price }} DKK</span>
+                    <button class="btn btn-danger btn-sm" @click="removeFromCart(item.productId)">❌ Fjern</button>
+                </div>
+            </div>
+            <p v-else class="text-muted">Din kurv er tom.</p>
+        </div>
     </main>
+
     <footer class="bg-dark text-white text-center py-3 mt-5">
         &copy; 2025 FashionHub. All Rights Reserved.
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="/MAIN/app.js"></script> <!-- JavaScript fil -->
 </body>
 </html>
