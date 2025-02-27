@@ -1,7 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using ProdukterRest.DTO;
-using Newtonsoft.Json;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -160,82 +159,4 @@ public class ProdukterController : ControllerBase
         }
     }
 
-    [Route("api/produkter")]
-    [ApiController]
-    public class ProductController : ControllerBase
-    {
-        private readonly ProdukterRepo _produktRepo;
-
-        public ProductController(ProdukterRepo produktRepo)
-        {
-            _produktRepo = produktRepo;
-        }
-
-
-
-        // 🛒 Tilføj produkt til indkøbskurven (bruger session)
-        [HttpPost("cart/add/{productId}")]
-        public IActionResult AddToCart(int productId)
-        {
-            // Hent alle produkter fra databasen
-            var products = _produktRepo.GetAllProducts();
-            var product = products.FirstOrDefault(p => p.ProductId == productId);
-
-            if (product == null)
-            {
-                return NotFound(new { message = "Produktet blev ikke fundet" });
-            }
-
-            // Hent kurven fra session
-            List<Product> cart = GetCartFromSession();
-
-            // Tilføj produktet til kurven
-            cart.Add(product);
-
-            // Gem kurven i session igen
-            SaveCartToSession(cart);
-
-            return Ok(new { message = "Produkt tilføjet til kurven", cart });
-        }
-
-        // 🛒 Hent indkøbskurven
-        [HttpGet("cart")]
-        public IActionResult GetCart()
-        {
-            var cart = GetCartFromSession();
-            return Ok(cart);
-        }
-
-        // 🛒 Fjern produkt fra kurven
-        [HttpDelete("cart/remove/{productId}")]
-        public IActionResult RemoveFromCart(int productId)
-        {
-            var cart = GetCartFromSession();
-            var product = cart.FirstOrDefault(p => p.ProductId == productId);
-
-            if (product == null)
-            {
-                return NotFound(new { message = "Produktet findes ikke i kurven" });
-            }
-
-            // Fjern produktet
-            cart.Remove(product);
-            SaveCartToSession(cart);
-
-            return Ok(new { message = "Produkt fjernet fra kurven", cart });
-        }
-
-        // 🛒 Hjælpefunktion til at hente kurven fra session
-        private List<Product> GetCartFromSession()
-        {
-            var sessionData = HttpContext.Session.GetString("Cart");
-            return sessionData == null ? new List<Product>() : JsonConvert.DeserializeObject<List<Product>>(sessionData);
-        }
-
-        // 🛒 Hjælpefunktion til at gemme kurven i session
-        private void SaveCartToSession(List<Product> cart)
-        {
-            HttpContext.Session.SetString("Cart", JsonConvert.SerializeObject(cart));
-        }
-    }
 }

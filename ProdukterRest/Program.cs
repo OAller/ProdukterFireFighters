@@ -51,9 +51,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowAll");
 
-app.UseSession(); // Tilføj session middleware
-
 app.UseAuthorization();
+
+app.UseSession(); // Tilføj session middleware
 
 app.MapControllers();
 
